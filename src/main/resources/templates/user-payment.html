@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment — BM Booking</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a class="navbar-brand" th:href="@{/user/dashboard}">🚌 BM Booking</a>
+        <ul class="navbar-links">
+            <li><a th:href="@{/user/search}">Search Routes</a></li>
+            <li><a th:href="@{/user/my-bookings}">My Bookings</a></li>
+            <li><a th:href="@{/logout}" class="btn-logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <h2 class="card-title">Payment</h2>
+
+            <div class="route-info">
+                <span>Total Fare:</span>
+                <strong>₹<span th:text="${booking.totalFare}"></span></strong>
+            </div>
+
+            <form th:action="@{/user/payment}" method="post">
+                <input type="hidden" name="bookingId" th:value="${booking.id}" />
+
+                <div class="form-group">
+                    <label>Select Payment Method</label>
+                    <select name="method" class="form-control" required>
+                        <option th:each="m : ${methods}" th:value="${m}" th:text="${m}">
+                        </option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-success btn-block">Pay Now</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+
+</html>

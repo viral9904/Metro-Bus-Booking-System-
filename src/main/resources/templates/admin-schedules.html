@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Schedules — BM Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a class="navbar-brand" th:href="@{/admin/dashboard}">🛠 BM Admin</a>
+        <ul class="navbar-links">
+            <li><a th:href="@{/admin/stops}">Stops</a></li>
+            <li><a th:href="@{/admin/routes}">Routes</a></li>
+            <li><a th:href="@{/admin/vehicles}">Vehicles</a></li>
+            <li><a th:href="@{/admin/schedules}" class="active">Schedules</a></li>
+            <li><a th:href="@{/admin/seat-classes}">Seat Classes</a></li>
+            <li><a th:href="@{/logout}" class="btn-logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <h2 class="card-title">Add New Schedule</h2>
+
+            <form th:action="@{/admin/schedules/save}" method="post">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Route</label>
+                        <select name="routeId" class="form-control" required>
+                            <option value="">Select Route</option>
+                            <option th:each="r : ${routes}" th:value="${r.id}" th:text="${r.sourceStop.city + ' - ' + r.sourceStop.stopName
+                                    + ' → '
+                                    + r.destinationStop.city + ' - ' + r.destinationStop.stopName}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Vehicle</label>
+                        <select name="vehicleId" class="form-control" required>
+                            <option value="">Select Vehicle</option>
+                            <option th:each="v : ${vehicles}" th:value="${v.id}"
+                                th:text="${v.vehicleNumber + ' (' + v.vehicleType + ')'}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Travel Date</label>
+                        <input type="date" name="travelDate" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Departure Time</label>
+                        <input type="time" name="departureTime" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Arrival Time</label>
+                        <input type="time" name="arrivalTime" class="form-control" required />
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Schedule</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2 class="card-title">All Schedules</h2>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Route</th>
+                            <th>Vehicle</th>
+                            <th>Date</th>
+                            <th>Departure</th>
+                            <th>Arrival</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="s : ${schedules}">
+                            <td th:text="${s.id}"></td>
+                            <td th:text="${s.route.sourceStop.city + ' - ' + s.route.sourceStop.stopName
+                                    + ' → '
+                                    + s.route.destinationStop.city + ' - ' + s.route.destinationStop.stopName}"></td>
+                            <td th:text="${s.vehicle.vehicleNumber}"></td>
+                            <td th:text="${s.travelDate}"></td>
+                            <td th:text="${s.departureTime}"></td>
+                            <td th:text="${s.arrivalTime}"></td>
+                            <td>
+                                <a th:href="@{/admin/schedules/delete/{id}(id=${s.id})}" class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Delete this schedule?')">Delete</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

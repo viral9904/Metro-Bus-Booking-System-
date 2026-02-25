@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Bookings — BM Booking</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a class="navbar-brand" th:href="@{/user/dashboard}">🚌 BM Booking</a>
+        <ul class="navbar-links">
+            <li><a th:href="@{/user/search}">Search Routes</a></li>
+            <li><a th:href="@{/user/my-bookings}" class="active">My Bookings</a></li>
+            <li><a th:href="@{/logout}" class="btn-logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <h2 class="card-title">My Bookings</h2>
+
+            <!-- No bookings -->
+            <div th:if="${#lists.isEmpty(bookings)}" class="alert alert-info">
+                You haven't made any bookings yet.
+                <a th:href="@{/user/search}">Search and book a ticket now!</a>
+            </div>
+
+            <!-- Bookings table -->
+            <div th:if="${!#lists.isEmpty(bookings)}" class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Route</th>
+                            <th>Date</th>
+                            <th>Vehicle</th>
+                            <th>Class</th>
+                            <th>Fare</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="b : ${bookings}">
+                            <td th:text="${b.id}"></td>
+                            <td th:text="${b.schedule.route.sourceStop.city
+                            + ' → '
+                            + b.schedule.route.destinationStop.city}"></td>
+                            <td th:text="${b.schedule.travelDate}"></td>
+                            <td th:text="${b.schedule.vehicle.vehicleNumber}"></td>
+                            <td th:text="${b.seatClass.className}"></td>
+                            <td>₹<span th:text="${b.totalFare}"></span></td>
+                            <td>
+                                <span class="badge"
+                                    th:classappend="${b.status.name() == 'CONFIRMED' ? 'badge-confirmed' :
+                                                   (b.status.name() == 'PENDING' ? 'badge-pending' : 'badge-cancelled')}"
+                                    th:text="${b.status}"></span>
+                            </td>
+                            <td>
+                                <a th:if="${b.status.name() == 'PENDING'}" th:href="@{/user/payment/{id}(id=${b.id})}"
+                                    class="btn btn-success btn-sm">Pay</a>
+                                <a th:if="${b.status.name() == 'CONFIRMED'}"
+                                    th:href="@{/user/confirmation/{id}(id=${b.id})}"
+                                    class="btn btn-primary btn-sm">View</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

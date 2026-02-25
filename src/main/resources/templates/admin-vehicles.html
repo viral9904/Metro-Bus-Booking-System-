@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Vehicles — BM Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a class="navbar-brand" th:href="@{/admin/dashboard}">🛠 BM Admin</a>
+        <ul class="navbar-links">
+            <li><a th:href="@{/admin/stops}">Stops</a></li>
+            <li><a th:href="@{/admin/routes}">Routes</a></li>
+            <li><a th:href="@{/admin/vehicles}" class="active">Vehicles</a></li>
+            <li><a th:href="@{/admin/schedules}">Schedules</a></li>
+            <li><a th:href="@{/admin/seat-classes}">Seat Classes</a></li>
+            <li><a th:href="@{/logout}" class="btn-logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <h2 class="card-title">Add New Vehicle</h2>
+
+            <form th:action="@{/admin/vehicles/save}" th:object="${vehicle}" method="post">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Vehicle Number</label>
+                        <input type="text" th:field="*{vehicleNumber}" class="form-control"
+                            placeholder="e.g. MH-12-AB-1234" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Vehicle Type</label>
+                        <select th:field="*{vehicleType}" class="form-control" required>
+                            <option value="">Select Type</option>
+                            <option th:each="t : ${types}" th:value="${t}" th:text="${t}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Total Seats</label>
+                        <input type="number" th:field="*{totalSeats}" class="form-control" placeholder="e.g. 40"
+                            required />
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Vehicle</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2 class="card-title">All Vehicles</h2>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Vehicle Number</th>
+                            <th>Type</th>
+                            <th>Seats</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="v : ${vehicles}">
+                            <td th:text="${v.id}"></td>
+                            <td th:text="${v.vehicleNumber}"></td>
+                            <td th:text="${v.vehicleType}"></td>
+                            <td th:text="${v.totalSeats}"></td>
+                            <td>
+                                <a th:href="@{/admin/vehicles/delete/{id}(id=${v.id})}" class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Delete this vehicle?')">Delete</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

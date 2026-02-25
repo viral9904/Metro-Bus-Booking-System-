@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book Ticket — BM Booking</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <a class="navbar-brand" th:href="@{/user/dashboard}">🚌 BM Booking</a>
+    <ul class="navbar-links">
+      <li><a th:href="@{/user/search}">Search Routes</a></li>
+      <li><a th:href="@{/user/my-bookings}">My Bookings</a></li>
+      <li><a th:href="@{/logout}" class="btn-logout">Logout</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <div class="card">
+      <h2 class="card-title">Book Ticket</h2>
+
+      <!-- Route Info -->
+      <div class="route-info">
+        <span th:text="${schedule.route.sourceStop.city
+                + ' - ' + schedule.route.sourceStop.stopName}"></span>
+        <span class="arrow">→</span>
+        <span th:text="${schedule.route.destinationStop.city
+                + ' - ' + schedule.route.destinationStop.stopName}"></span>
+      </div>
+
+      <form th:action="@{/user/book}" method="post">
+        <input type="hidden" name="scheduleId" th:value="${schedule.id}" />
+
+        <!-- Seat Class -->
+        <div class="form-group">
+          <label>Select Seat Class</label>
+          <select name="seatClassId" class="form-control" required>
+            <option value="">Select Class</option>
+            <option th:each="c : ${seatClasses}" th:value="${c.id}" th:text="${c.className + ' - ₹' + c.baseFare}">
+            </option>
+          </select>
+        </div>
+
+        <!-- Passengers -->
+        <h3 class="mb-2">Passenger Details</h3>
+
+        <div id="passenger-container">
+          <div class="passenger-block">
+            <div class="passenger-header">Passenger 1</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Name</label>
+                <input type="text" class="form-control" name="passengerName" placeholder="Full Name" required />
+              </div>
+              <div class="form-group">
+                <label>Age</label>
+                <input type="number" class="form-control" name="age" placeholder="Age" min="1" required />
+              </div>
+              <div class="form-group">
+                <label>Gender</label>
+                <select class="form-control" name="gender" required>
+                  <option value="">Select</option>
+                  <option value="MALE">Male</option>
+                  <option value="FEMALE">Female</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-2 mb-3">
+          <button type="button" class="btn btn-outline" onclick="addPassenger()">
+            + Add Another Passenger
+          </button>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Proceed to Payment</button>
+      </form>
+    </div>
+  </div>
+
+  <script th:src="@{/js/app.js}"></script>
+</body>
+
+</html>

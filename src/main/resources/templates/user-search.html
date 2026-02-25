@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Search Routes — BM Booking</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <a class="navbar-brand" th:href="@{/user/dashboard}">🚌 BM Booking</a>
+    <ul class="navbar-links">
+      <li><a th:href="@{/user/search}" class="active">Search Routes</a></li>
+      <li><a th:href="@{/user/my-bookings}">My Bookings</a></li>
+      <li><a th:href="@{/logout}" class="btn-logout">Logout</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <div class="card">
+      <h2 class="card-title">Search Routes</h2>
+
+      <form th:action="@{/user/search}" method="post">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Source</label>
+            <select name="sourceId" class="form-control" required>
+              <option value="">Select Source</option>
+              <option th:each="s : ${stops}" th:value="${s.id}" th:text="${s.city + ' - ' + s.stopName}">
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Destination</label>
+            <select name="destinationId" class="form-control" required>
+              <option value="">Select Destination</option>
+              <option th:each="s : ${stops}" th:value="${s.id}" th:text="${s.city + ' - ' + s.stopName}">
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Travel Date</label>
+            <input type="date" name="travelDate" class="form-control" required />
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Search Schedules</button>
+      </form>
+    </div>
+  </div>
+
+</body>
+
+</html>

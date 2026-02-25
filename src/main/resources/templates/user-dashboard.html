@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard — BM Booking</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a class="navbar-brand" th:href="@{/user/dashboard}">🚌 BM Booking</a>
+        <ul class="navbar-links">
+            <li><a th:href="@{/user/search}">Search Routes</a></li>
+            <li><a th:href="@{/user/my-bookings}">My Bookings</a></li>
+            <li><a th:href="@{/logout}" class="btn-logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h2 class="mb-3">Welcome to your Dashboard</h2>
+
+        <div class="dashboard-grid">
+            <a th:href="@{/user/search}" class="dash-card">
+                <div class="icon">🔍</div>
+                <h3>Search Routes</h3>
+                <p>Find bus and metro schedules</p>
+            </a>
+
+            <a th:href="@{/user/my-bookings}" class="dash-card">
+                <div class="icon">🎫</div>
+                <h3>My Bookings</h3>
+                <p>View your booking history</p>
+            </a>
+
+            <a th:href="@{/user/search}" class="dash-card">
+                <div class="icon">🚀</div>
+                <h3>Book Now</h3>
+                <p>Book a ticket instantly</p>
+            </a>
+        </div>
+    </div>
+
+</body>
+
+</html>

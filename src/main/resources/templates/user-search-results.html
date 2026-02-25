@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Available Schedules — BM Booking</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <a class="navbar-brand" th:href="@{/user/dashboard}">🚌 BM Booking</a>
+    <ul class="navbar-links">
+      <li><a th:href="@{/user/search}">Search Routes</a></li>
+      <li><a th:href="@{/user/my-bookings}">My Bookings</a></li>
+      <li><a th:href="@{/logout}" class="btn-logout">Logout</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <div class="card">
+      <h2 class="card-title">Available Schedules</h2>
+
+      <!-- No results -->
+      <div th:if="${#lists.isEmpty(schedules)}" class="alert alert-info">
+        No schedules found for the selected route and date. Please try different options.
+      </div>
+
+      <!-- Results table -->
+      <div th:if="${!#lists.isEmpty(schedules)}" class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Route</th>
+              <th>Vehicle</th>
+              <th>Date</th>
+              <th>Departure</th>
+              <th>Arrival</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="s : ${schedules}">
+              <td th:text="${s.route.sourceStop.stopName + ' → ' + s.route.destinationStop.stopName}"></td>
+              <td th:text="${s.vehicle.vehicleNumber}"></td>
+              <td th:text="${s.travelDate}"></td>
+              <td th:text="${s.departureTime}"></td>
+              <td th:text="${s.arrivalTime}"></td>
+              <td>
+                <div sec:authorize="isAuthenticated()">
+                  <a th:href="@{/user/book/{id}(id=${s.id})}" class="btn btn-primary btn-sm">Book</a>
+                </div>
+                <div sec:authorize="!isAuthenticated()">
+                  <a th:href="@{/auth/login}" class="btn btn-outline btn-sm">Login to Book</a>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-3">
+        <a th:href="@{/user/search}" class="btn btn-outline">← Back to Search</a>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>
