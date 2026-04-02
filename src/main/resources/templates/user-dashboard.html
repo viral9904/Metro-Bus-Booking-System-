@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard — BM Booking</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+
+<nav class="navbar">
+    <a class="navbar-brand" th:href="@{/user/dashboard}">
+        <span class="brand-icon">🚌</span>
+        BM Booking
+    </a>
+    <button class="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+    </button>
+    <ul class="navbar-links">
+        <li><a th:href="@{/user/search}"><span class="nav-icon">🔍</span> Search Routes</a></li>
+        <li><a th:href="@{/user/my-bookings}"><span class="nav-icon">🎫</span> My Bookings</a></li>
+
+        <!-- 👤 PROFILE DROPDOWN -->
+        <li class="profile-dropdown" th:if="${loggedInUserName != null}">
+            <a th:href="@{/profile}" class="profile-btn" id="profileBtn">
+                <div class="avatar">👤</div>
+                <span>Hi, <b th:text="${loggedInUserName}"></b></span>
+            </a>
+
+            <div id="dropdownMenu" class="dropdown-menu">
+                <a th:href="@{/profile}">✏️ Edit Profile</a>
+                <a th:href="@{/change-password}">🔐 Change Password</a>
+                <a th:href="@{/logout}">🚪 Logout</a>
+            </div>
+        </li>
+    </ul>
+</nav>
+
+<!-- TOP TICKER -->
+<div class="top-ticker">
+    <div class="top-ticker-content">
+
+        <span th:each="s : ${upcomingSchedules}" class="top-ticker-item">
+            🚌 <b th:text="${s.route.sourceStop.stopName}"></b>
+            → <b th:text="${s.route.destinationStop.stopName}"></b>
+            | ⏰ <span th:text="${#temporals.format(s.departureTime, 'hh:mm a')}"></span>
+            | 🚍 <span th:text="${s.vehicle.vehicleType}"></span>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+        </span>
+
+        <span th:each="s : ${upcomingSchedules}" class="top-ticker-item">
+            🚌 <b th:text="${s.route.sourceStop.stopName}"></b>
+            → <b th:text="${s.route.destinationStop.stopName}"></b>
+            | ⏰ <span th:text="${#temporals.format(s.departureTime, 'hh:mm a')}"></span>
+            | 🚍 <span th:text="${s.vehicle.vehicleType}"></span>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+        </span>
+
+    </div>
+</div>
+
+<div class="container">
+
+    <h1 class="page-title">Welcome to your Dashboard</h1>
+    <p class="page-subtitle">Book bus & metro tickets, manage your trips and more</p>
+
+    <!-- DASHBOARD CARDS -->
+    <div class="dashboard-grid">
+
+        <a th:href="@{/user/search}" class="dash-card">
+            <div class="icon">🔍</div>
+            <h3>Search Routes</h3>
+            <p>Find bus and metro schedules</p>
+        </a>
+
+        <a th:href="@{/user/my-bookings}" class="dash-card">
+            <div class="icon">🎫</div>
+            <h3>My Bookings</h3>
+            <p>View your booking history</p>
+        </a>
+
+        <a th:href="@{/user/search}" class="dash-card">
+            <div class="icon">🚀</div>
+            <h3>Book Now</h3>
+            <p>Book a ticket instantly</p>
+        </a>
+
+    </div>
+
+    <!-- Explore Routes -->
+    <div class="card mt-3 text-center">
+        <h3 style="font-size:1.2rem; font-weight:700; margin-bottom:8px;">🚌 Explore All Routes</h3>
+        <p style="color:#64748b; margin-bottom:16px;">View all bus & metro schedules</p>
+
+        <a th:href="@{/user/schedules}" class="btn btn-primary">
+            View All Schedules →
+        </a>
+    </div>
+
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+
+</body>
+</html>

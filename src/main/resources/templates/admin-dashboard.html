@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard — BM Booking</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+
+<!-- Navigation -->
+<nav class="navbar">
+    <a class="navbar-brand" th:href="@{/admin/dashboard}">
+        <span class="brand-icon">🛠</span>
+        BM Admin
+    </a>
+    <button class="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+    </button>
+    <ul class="navbar-links">
+        <li><a th:href="@{/admin/stops}"><span class="nav-icon">📍</span> Stops</a></li>
+        <li><a th:href="@{/admin/routes}"><span class="nav-icon">🗺️</span> Routes</a></li>
+        <li><a th:href="@{/admin/vehicles}"><span class="nav-icon">🚌</span> Vehicles</a></li>
+        <li><a th:href="@{/admin/schedules}"><span class="nav-icon">📅</span> Schedules</a></li>
+        <li><a th:href="@{/admin/seat-classes}"><span class="nav-icon">💺</span> Seat Classes</a></li>
+        <li><a th:href="@{/admin/users}"><span class="nav-icon">👤</span> Users</a></li>
+        <li><a th:href="@{/admin/bookings}"><span class="nav-icon">🎫</span> Bookings</a></li>
+
+        <!-- 👤 PROFILE DROPDOWN -->
+        <li class="profile-dropdown" th:if="${loggedInUserName != null}">
+
+            <!-- ✅ FIXED BUTTON -->
+            <div class="profile-btn" id="profileBtn">
+                <div class="avatar">👤</div>
+                <span>Hi, <b th:text="${loggedInUserName}"></b></span>
+            </div>
+
+            <!-- ✅ DROPDOWN -->
+            <div id="dropdownMenu" class="dropdown-menu">
+                <a th:href="@{/profile}">✏️ Edit Profile</a>
+                <a th:href="@{/change-password}">🔐 Change Password</a>
+                <a th:href="@{/logout}">🚪 Logout</a>
+            </div>
+
+        </li>
+    </ul>
+</nav>
+
+<div class="container">
+    <h1 class="page-title">Admin Dashboard</h1>
+    <p class="page-subtitle">Manage buses, metros, routes, schedules and bookings</p>
+
+    <div class="dashboard-grid">
+
+        <a th:href="@{/admin/stops}" class="dash-card">
+            <div class="icon">📍</div>
+            <h3>Manage Stops</h3>
+            <p>Add or remove bus/metro stops</p>
+        </a>
+
+        <a th:href="@{/admin/routes}" class="dash-card">
+            <div class="icon">🗺️</div>
+            <h3>Manage Routes</h3>
+            <p>Configure source-destination routes</p>
+        </a>
+
+        <a th:href="@{/admin/vehicles}" class="dash-card">
+            <div class="icon">🚌</div>
+            <h3>Manage Vehicles</h3>
+            <p>Add buses and metro vehicles</p>
+        </a>
+
+        <a th:href="@{/admin/schedules}" class="dash-card">
+            <div class="icon">📅</div>
+            <h3>Manage Schedules</h3>
+            <p>Set departure and arrival times</p>
+        </a>
+
+        <a th:href="@{/admin/seat-classes}" class="dash-card">
+            <div class="icon">💺</div>
+            <h3>Manage Seat Classes</h3>
+            <p>Define seat types and fares</p>
+        </a>
+
+        <!-- ✅ NEW -->
+        <a th:href="@{/admin/users}" class="dash-card">
+            <div class="icon">👤</div>
+            <h3>Manage Users</h3>
+            <p>View and manage registered users</p>
+        </a>
+
+        <!-- ✅ NEW -->
+        <a th:href="@{/admin/bookings}" class="dash-card">
+            <div class="icon">🎫</div>
+            <h3>Manage Bookings</h3>
+            <p>View all bookings and payments</p>
+        </a>
+        <a th:href="@{/admin/cancellations}" class="dash-card">
+            <div class="icon">❌</div>
+            <h3>Ticket Cancellations</h3>
+            <p>View all cancelled tickets & refunds</p>
+        </a>
+
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+
+</html>

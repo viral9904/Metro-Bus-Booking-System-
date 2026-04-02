@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>All Bookings — BM Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+
+<nav class="navbar">
+    <a class="navbar-brand" th:href="@{/admin/dashboard}">
+        <span class="brand-icon">🛠</span>
+        BM Admin
+    </a>
+    <button class="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+    </button>
+    <ul class="navbar-links">
+        <li><a th:href="@{/admin/stops}"><span class="nav-icon">📍</span> Stops</a></li>
+        <li><a th:href="@{/admin/routes}"><span class="nav-icon">🗺️</span> Routes</a></li>
+        <li><a th:href="@{/admin/vehicles}"><span class="nav-icon">🚌</span> Vehicles</a></li>
+        <li><a th:href="@{/admin/schedules}"><span class="nav-icon">📅</span> Schedules</a></li>
+        <li><a th:href="@{/admin/seat-classes}"><span class="nav-icon">💺</span> Seat Classes</a></li>
+        <li><a th:href="@{/admin/users}"><span class="nav-icon">👤</span> Users</a></li>
+        <li><a th:href="@{/admin/bookings}" class="active"><span class="nav-icon">🎫</span> Bookings</a></li>
+        <!-- 👤 PROFILE DROPDOWN -->
+        <li class="profile-dropdown" th:if="${loggedInUserName != null}">
+            <a th:href="@{/profile}" class="profile-btn" id="profileBtn">
+                <div class="avatar">👤</div>
+                <span>Hi, <b th:text="${loggedInUserName}"></b></span>
+            </a>
+            <div id="dropdownMenu" class="dropdown-menu">
+                <a th:href="@{/profile}">✏️ Edit Profile</a>
+                <a th:href="@{/logout}">🚪 Logout</a>
+            </div>
+        </li>
+    </ul>
+</nav>
+
+<div class="container">
+    <div class="card">
+        <h2 class="card-title">🎫 All Bookings</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>User</th>
+                    <th>Route</th>
+                    <th>Vehicle</th>
+                    <th>Seats</th>
+                    <th>Fare</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="b : ${bookings}">
+                    <td th:text="${b.id}"></td>
+                    <td th:text="${b.user.fullName}"></td>
+                    <td th:text="${b.schedule.route.sourceStop.stopName + ' → ' +
+                                  b.schedule.route.destinationStop.stopName}">
+                    </td>
+                    <td th:text="${b.schedule.vehicle.vehicleNumber}"></td>
+                    <td th:text="${b.ticketCount}"></td>
+                    <td><strong>₹<span th:text="${b.totalFare}"></span></strong></td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${b.status.name() == 'CONFIRMED' ? 'badge-confirmed' :
+                                              (b.status.name() == 'PENDING' ? 'badge-pending' : 'badge-cancelled')}"
+                              th:text="${b.status}">
+                        </span>
+                    </td>
+                    <td>
+                        <!-- ✅ Cancel Booking Button -->
+                        <form th:if="${b.status.name() == 'CONFIRMED'}"
+                              th:action="@{/admin/bookings/cancel/{id}(id=${b.id})}"
+                              method="post"
+                              style="display:inline;">
+                            <button type="submit"
+                                    class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Cancel this booking?')">
+                                ❌ Cancel
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

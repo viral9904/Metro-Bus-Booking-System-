@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Vehicles — BM Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+
+<nav class="navbar">
+    <a class="navbar-brand" th:href="@{/admin/dashboard}">
+        <span class="brand-icon">🛠</span>
+        BM Admin
+    </a>
+    <button class="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+    </button>
+    <ul class="navbar-links">
+        <li><a th:href="@{/admin/stops}"><span class="nav-icon">📍</span> Stops</a></li>
+        <li><a th:href="@{/admin/routes}"><span class="nav-icon">🗺️</span> Routes</a></li>
+        <li><a th:href="@{/admin/vehicles}" class="active"><span class="nav-icon">🚌</span> Vehicles</a></li>
+        <li><a th:href="@{/admin/schedules}"><span class="nav-icon">📅</span> Schedules</a></li>
+        <li><a th:href="@{/admin/seat-classes}"><span class="nav-icon">💺</span> Seat Classes</a></li>
+        <!-- 👤 PROFILE DROPDOWN -->
+        <li class="profile-dropdown" th:if="${loggedInUserName != null}">
+            <a th:href="@{/profile}" class="profile-btn" id="profileBtn">
+                <div class="avatar">👤</div>
+                <span>Hi, <b th:text="${loggedInUserName}"></b></span>
+            </a>
+            <div id="dropdownMenu" class="dropdown-menu">
+                <a th:href="@{/profile}">✏️ Edit Profile</a>
+                <a th:href="@{/logout}">🚪 Logout</a>
+            </div>
+        </li>
+    </ul>
+</nav>
+
+<div class="container">
+
+    <!-- ================= Add Vehicle ================= -->
+    <div class="card">
+        <h2 class="card-title">🚌 Add New Vehicle</h2>
+
+        <!-- Error Message -->
+        <div th:if="${error}" class="alert alert-danger">
+            <span th:text="${error}"></span>
+        </div>
+
+        <!-- Success Message -->
+        <div th:if="${param.success}" class="alert alert-success">
+            <p>Vehicle added successfully!</p>
+        </div>
+
+        <form th:action="@{/admin/vehicles/save}"
+              th:object="${vehicle}"
+              method="post">
+
+            <div class="form-row">
+
+                <div class="form-group">
+                    <label>Vehicle Number</label>
+                    <input type="text"
+                           th:field="*{vehicleNumber}"
+                           class="form-control"
+                           placeholder="e.g. GJ18BD1234"
+                           required />
+                </div>
+
+                <div class="form-group">
+                    <label>Vehicle Type</label>
+                    <select th:field="*{vehicleType}"
+                            class="form-control"
+                            required>
+                        <option value="">Select Type</option>
+                        <option th:each="t : ${types}"
+                                th:value="${t}"
+                                th:text="${t}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Total Seats</label>
+                    <input type="number"
+                           th:field="*{totalSeats}"
+                           class="form-control"
+                           placeholder="e.g. 40"
+                           required />
+                </div>
+
+                <!-- ✅ NEW: Seat Class Dropdown -->
+                <div class="form-group">
+                    <label>Seat Class</label>
+                    <select th:field="*{seatClass}"
+                            class="form-control"
+                            required>
+                        <option value="">Select Seat Class</option>
+                        <option th:each="sc : ${seatClasses}"
+                                th:value="${sc.id}"
+                                th:text="${sc.className}">
+                        </option>
+                    </select>
+                </div>
+
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-2">
+                ➕ Add Vehicle
+            </button>
+        </form>
+
+    </div>
+
+    <!-- ================= All Vehicles ================= -->
+    <div class="card">
+        <h2 class="card-title">📋 All Vehicles</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Vehicle Number</th>
+                    <th>Type</th>
+                    <th>Seats</th>
+                    <th>Seat Class</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="v : ${vehicles}">
+                    <td th:text="${v.id}"></td>
+                    <td th:text="${v.vehicleNumber}"></td>
+                    <td><span class="seat-badge seat-badge-nonac" th:text="${v.vehicleType}"></span></td>
+                    <td th:text="${v.totalSeats}"></td>
+                    <td th:text="${v.seatClass != null ? v.seatClass.className : 'N/A'}"></td>
+                    <td>
+                        <a th:href="@{/admin/vehicles/delete/{id}(id=${v.id})}"
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Delete this vehicle?')">
+                            🗑 Delete
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

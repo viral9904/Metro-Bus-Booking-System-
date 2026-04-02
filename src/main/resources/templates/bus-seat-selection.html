@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Select Seats — BM Booking</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <link rel="stylesheet" th:href="@{/css/seat.css}">
+</head>
+
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <a class="navbar-brand" th:href="@{/user/dashboard}">
+    <span class="brand-icon">🚌</span>
+    BM Booking
+  </a>
+
+  <button class="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+
+  <ul class="navbar-links">
+    <li><a th:href="@{/user/search}">🔍 Search</a></li>
+    <li><a th:href="@{/user/my-bookings}">🎫 My Bookings</a></li>
+  </ul>
+</nav>
+
+<div class="seat-container-wrapper">
+
+  <h2>Select Your Seats</h2>
+
+  <p>
+    Select exactly
+    <strong th:text="${ticketCount}"></strong>
+    seats
+  </p>
+
+  <form method="post" th:action="@{/user/bus/confirm-seats}">
+
+    <input type="hidden" name="scheduleId" th:value="${scheduleId}" />
+    <input type="hidden" name="ticketCount" th:value="${ticketCount}" />
+    <input type="hidden" id="ticketCountValue" th:value="${ticketCount}" />
+
+    <!-- Bus Body -->
+    <div class="bus-body">
+
+      <!-- Front -->
+      <div class="bus-windshield">
+        <span class="windshield-label">Front</span>
+
+        <div class="driver-section">
+          <span>Driver</span>
+          <span class="driver-icon">🚌</span>
+        </div>
+      </div>
+
+      <!-- Seat Area -->
+      <div class="seat-area">
+        <div id="seatContainer">
+
+          <!-- ✅ ONLY LOOP (FIXED) -->
+          <th:block th:each="seat, iter : ${seats}">
+
+            <div th:class="'seat ' + ${#strings.toUpperCase(seat.status)}"
+                 th:data-seat="${seat.seatNumber}"
+                 th:text="${seat.seatNumber}">
+            </div>
+
+            <!-- aisle after 2 seats -->
+            <div th:if="${iter.index % 4 == 1}" class="aisle"></div>
+
+          </th:block>
+
+        </div>
+      </div>
+
+      <!-- Legend -->
+      <div class="seat-legend">
+
+        <div class="legend-item">
+          <div class="legend-box legend-available"></div>
+          Available
+        </div>
+
+        <div class="legend-item">
+          <div class="legend-box legend-selected"></div>
+          Selected
+        </div>
+
+        <div class="legend-item">
+          <div class="legend-box legend-booked"></div>
+          Booked
+        </div>
+
+        <div class="legend-item">
+          <div class="legend-box legend-locked"></div>
+          Locked
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="seat-summary" id="seatSummary">
+      <div class="seat-summary-title">🪑 Selected Seats</div>
+      <div id="seatChips"></div>
+
+      <div>
+        Selected:
+        <span id="seatCountDisplay">
+          0 / <span th:text="${ticketCount}"></span>
+        </span>
+      </div>
+    </div>
+
+    <input type="hidden" name="selectedSeats" id="selectedSeats"/>
+
+    <div style="text-align:center;">
+      <button type="submit" class="btn-confirm-seat">
+        ✅ Confirm Seats
+      </button>
+    </div>
+
+  </form>
+
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+
+<!-- ✅ FINAL JS -->
+<script>
+  const ticketCount = parseInt(document.getElementById("ticketCountValue").value);
+  let selected = [];
+
+  const chipsContainer = document.getElementById('seatChips');
+  const countDisplay = document.getElementById('seatCountDisplay');
+
+  function updateSummary() {
+    chipsContainer.innerHTML = selected.map(s =>
+            `<span class="seat-chip">💺 ${s}</span>`
+    ).join('');
+
+    countDisplay.innerHTML = `${selected.length} / ${ticketCount}`;
+  }
+
+  document.querySelectorAll('.seat').forEach(seat => {
+
+    seat.addEventListener('click', function () {
+
+      // ❌ block booked/locked
+      if (this.classList.contains('BOOKED') || this.classList.contains('LOCKED')) {
+        return;
+      }
+
+      const seatNumber = this.dataset.seat;
+
+      if (selected.includes(seatNumber)) {
+
+        selected = selected.filter(s => s !== seatNumber);
+        this.classList.remove('SELECTED');
+        this.classList.add('AVAILABLE');
+
+      } else {
+
+        if (selected.length >= ticketCount) {
+          alert("You can select only " + ticketCount + " seats");
+          return;
+        }
+
+        selected.push(seatNumber);
+        this.classList.remove('AVAILABLE');
+        this.classList.add('SELECTED');
+      }
+
+      document.getElementById("selectedSeats").value = selected.join(",");
+      updateSummary();
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Available Schedules — BM Booking</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+
+<nav class="navbar">
+  <a class="navbar-brand" th:href="@{/user/dashboard}">
+      <span class="brand-icon">🚌</span>
+      BM Booking
+  </a>
+  <button class="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+  </button>
+  <ul class="navbar-links">
+    <li><a th:href="@{/user/search}"><span class="nav-icon">🔍</span> Search Routes</a></li>
+    <li><a th:href="@{/user/my-bookings}"><span class="nav-icon">🎫</span> My Bookings</a></li>
+    <!-- 👤 PROFILE DROPDOWN -->
+    <li class="profile-dropdown" th:if="${loggedInUserName != null}">
+
+      <a th:href="@{/profile}" class="profile-btn" id="profileBtn">
+        <div class="avatar">👤</div>
+        <span>Hi, <b th:text="${loggedInUserName}"></b></span>
+      </a>
+
+      <div id="dropdownMenu" class="dropdown-menu">
+        <a th:href="@{/profile}">✏️ Edit Profile</a>
+        <a th:href="@{/logout}">🚪 Logout</a>
+      </div>
+
+    </li>
+  </ul>
+</nav>
+
+<div class="container">
+  <div class="card">
+    <h2 class="card-title">🚌 Available Schedules</h2>
+
+    <div th:if="${#lists.isEmpty(schedules)}" class="alert alert-info">
+      🚫 No schedules found for the selected route and date.
+    </div>
+
+    <div th:if="${!#lists.isEmpty(schedules)}" class="table-wrapper">
+      <table>
+        <thead>
+        <tr>
+          <th>Route</th>
+          <th>Type</th>
+          <th>Class</th>
+          <th>Price</th>
+          <th>Departure</th>
+          <th>Arrival</th>
+          <th>Tickets</th>
+          <th>Action</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="s : ${schedules}">
+
+          <!-- Route -->
+          <td th:text="${s.route.sourceStop.stopName + ' → ' + s.route.destinationStop.stopName}"></td>
+
+          <!-- Vehicle Type -->
+          <td>
+            <span class="badge"
+                  th:text="${s.vehicle.vehicleType}">
+            </span>
+          </td>
+
+          <!-- Seat Class -->
+          <td>
+            <span class="seat-badge"
+                  th:text="${s.vehicle.seatClass != null ? s.vehicle.seatClass.className : 'Standard'}"
+                  th:classappend="${s.vehicle.seatClass != null and
+                                   #strings.equalsIgnoreCase(s.vehicle.seatClass.className, 'AC')}
+                                   ? ' seat-badge-ac'
+                                   : ' seat-badge-nonac'">
+            </span>
+          </td>
+
+          <!-- ✅ FIXED PRICE (NO MORE route.fare) -->
+          <td>
+            <strong>₹<span th:text="${s.vehicle.seatClass != null ? s.vehicle.seatClass.baseFare : 0}"></span></strong>
+          </td>
+
+          <!-- Departure -->
+          <td th:text="${s.departureTime}"></td>
+
+          <!-- Arrival -->
+          <td th:text="${s.arrivalTime}"></td>
+
+          <!-- Ticket Input -->
+          <td>
+            <input type="number"
+                   min="1"
+                   th:attr="max=${s.vehicle.totalSeats}"
+                   value="1"
+                   class="ticket-input"
+                   th:id="'ticketCount_' + ${s.id}" />
+          </td>
+
+          <!-- Action -->
+          <td>
+            <div sec:authorize="isAuthenticated()">
+              <button type="button"
+                      class="btn btn-primary btn-sm"
+                      th:attr="onclick=|goToSeats(${s.id})|">
+                🪑 Select Seats
+              </button>
+            </div>
+
+            <div sec:authorize="!isAuthenticated()">
+              <a th:href="@{/auth/login}"
+                 class="btn btn-outline btn-sm">
+                Login to Book
+              </a>
+            </div>
+          </td>
+
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-3">
+      <a th:href="@{/user/search}" class="btn btn-outline">← Back to Search</a>
+    </div>
+
+  </div>
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+<script>
+  function goToSeats(scheduleId) {
+
+    const ticketInput = document.getElementById("ticketCount_" + scheduleId);
+    const ticketCount = ticketInput.value;
+
+    if (!ticketCount || ticketCount <= 0) {
+      alert("Please enter valid number of tickets.");
+      return;
+    }
+
+    window.location.href =
+            "/user/bus/seats/" + scheduleId + "?ticketCount=" + ticketCount;
+  }
+</script>
+
+</body>
+</html>

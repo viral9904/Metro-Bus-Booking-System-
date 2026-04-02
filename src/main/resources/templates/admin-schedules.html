@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Schedules — BM Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+
+<!-- Navigation -->
+<nav class="navbar">
+    <a class="navbar-brand" th:href="@{/admin/dashboard}">
+        <span class="brand-icon">🛠</span>
+        BM Admin
+    </a>
+    <button class="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+    </button>
+    <ul class="navbar-links">
+        <li><a th:href="@{/admin/stops}"><span class="nav-icon">📍</span> Stops</a></li>
+        <li><a th:href="@{/admin/routes}"><span class="nav-icon">🗺️</span> Routes</a></li>
+        <li><a th:href="@{/admin/vehicles}"><span class="nav-icon">🚌</span> Vehicles</a></li>
+        <li><a th:href="@{/admin/schedules}" class="active"><span class="nav-icon">📅</span> Schedules</a></li>
+        <li><a th:href="@{/admin/seat-classes}"><span class="nav-icon">💺</span> Seat Classes</a></li>
+        <!-- 👤 PROFILE DROPDOWN -->
+        <li class="profile-dropdown" th:if="${loggedInUserName != null}">
+            <a th:href="@{/profile}" class="profile-btn" id="profileBtn">
+                <div class="avatar">👤</div>
+                <span>Hi, <b th:text="${loggedInUserName}"></b></span>
+            </a>
+            <div id="dropdownMenu" class="dropdown-menu">
+                <a th:href="@{/profile}">✏️ Edit Profile</a>
+                <a th:href="@{/logout}">🚪 Logout</a>
+            </div>
+        </li>
+    </ul>
+</nav>
+
+<div class="container">
+    <div class="card">
+        <h2 class="card-title">📅 Add New Schedule</h2>
+
+        <!-- 🔴 ERROR MESSAGE -->
+        <div th:if="${error}" class="alert alert-danger">
+            <span th:text="${error}"></span>
+        </div>
+
+        <!-- ✅ UPDATED FORM -->
+        <form th:action="@{/admin/schedules/save}" method="post">
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Route</label>
+                    <select name="routeId" class="form-control" required>
+                        <option value="">Select Route</option>
+                        <option th:each="r : ${routes}" th:value="${r.id}"
+                                th:text="${r.sourceStop.city + ' - ' + r.sourceStop.stopName
+                                            + ' → '
+                                            + r.destinationStop.city + ' - ' + r.destinationStop.stopName}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Vehicle</label>
+                    <select name="vehicleId" class="form-control" required>
+                        <option value="">Select Vehicle</option>
+                        <option th:each="v : ${vehicles}" th:value="${v.id}"
+                                th:text="${v.vehicleNumber + ' (' + v.vehicleType + ')'}">
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Start Date</label>
+                    <input type="date" name="travelDate" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label>Arrival Time</label>
+                    <input type="time" name="arrivalTime" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label>Departure Time</label>
+                    <input type="time" name="departureTime" class="form-control" required />
+                </div>
+            </div>
+
+            <!-- ✅ NEW FIELD -->
+            <div class="form-group">
+                <label>🔁 Repeat for Next Days</label>
+                <input type="number"
+                       name="repeatDays"
+                       class="form-control"
+                       value="1"
+                       min="1"
+                       placeholder="e.g. 30 for 1 month">
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                ➕ Add Schedule
+            </button>
+
+        </form>
+    </div>
+
+    <div class="card">
+        <h2 class="card-title">📋 All Schedules</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Route</th>
+                    <th>Vehicle</th>
+                    <th>Date</th>
+                    <th>Arrival</th>
+                    <th>Departure</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="s : ${schedules}">
+                    <td th:text="${s.id}"></td>
+
+                    <td th:text="${s.route.sourceStop.city + ' - ' + s.route.sourceStop.stopName
+                                    + ' → '
+                                    + s.route.destinationStop.city + ' - ' + s.route.destinationStop.stopName}">
+                    </td>
+
+                    <td th:text="${s.vehicle.vehicleNumber}"></td>
+
+                    <td th:text="${s.travelDate}"></td>
+
+                    <td th:text="${#temporals.format(s.arrivalTime, 'hh:mm a')}"></td>
+                    <td th:text="${#temporals.format(s.departureTime, 'hh:mm a')}"></td>
+
+                    <td>
+                        <a th:href="@{/admin/schedules/delete/{id}(id=${s.id})}"
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Delete this schedule?')">
+                            🗑 Delete
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

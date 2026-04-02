@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Booking Confirmation — BM Booking</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+
+<nav class="navbar">
+    <a class="navbar-brand" th:href="@{/user/dashboard}">
+        <span class="brand-icon">🚌</span>
+        BM Booking
+    </a>
+    <button class="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+    </button>
+    <ul class="navbar-links">
+        <li><a th:href="@{/user/search}"><span class="nav-icon">🔍</span> Search Routes</a></li>
+        <li><a th:href="@{/user/my-bookings}"><span class="nav-icon">🎫</span> My Bookings</a></li>
+        <!-- 👤 PROFILE DROPDOWN -->
+        <li class="profile-dropdown" th:if="${loggedInUserName != null}">
+
+            <a th:href="@{/profile}" class="profile-btn" id="profileBtn">
+                <div class="avatar">👤</div>
+                <span>Hi, <b th:text="${loggedInUserName}"></b></span>
+            </a>
+
+            <div id="dropdownMenu" class="dropdown-menu">
+                <a th:href="@{/profile}">✏️ Edit Profile</a>
+                <a th:href="@{/logout}">🚪 Logout</a>
+            </div>
+
+        </li>
+    </ul>
+</nav>
+
+<div class="container">
+    <div class="card confirmation-card text-center">
+
+        <div class="check-icon">🎉</div>
+        <h2 style="color:#10b981;">Booking Confirmed!</h2>
+        <hr style="border:none; border-top:1px solid #e2e8f0; margin:16px 0;">
+
+        <div class="confirmation-details">
+
+            <div class="detail-row">
+                <span class="detail-label">Booking ID</span>
+                <span class="detail-value" th:text="${booking.id}"></span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">City</span>
+                <span class="detail-value"
+                      th:text="${booking.schedule.route.sourceStop.city}">
+                </span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Route</span>
+                <span class="detail-value"
+                      th:text="${booking.schedule.route.sourceStop.stopName
+                              + ' → ' +
+                              booking.schedule.route.destinationStop.stopName}">
+                </span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Travel Date</span>
+                <span class="detail-value"
+                      th:text="${#temporals.format(booking.schedule.travelDate, 'dd MMM yyyy')}">
+                </span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Departure</span>
+                <span class="detail-value"
+                      th:text="${#temporals.format(booking.schedule.departureTime, 'hh:mm a')}">
+                </span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Arrival</span>
+                <span class="detail-value"
+                      th:text="${#temporals.format(booking.schedule.arrivalTime, 'hh:mm a')}">
+                </span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Vehicle</span>
+                <span class="detail-value"
+                      th:text="${booking.schedule.vehicle.vehicleNumber}">
+                </span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Seat Class</span>
+                <span class="detail-value"
+                      th:text="${booking.seatClass.className}">
+                </span>
+            </div>
+
+            <!-- ✅ NEW: Seat Numbers Section -->
+            <div class="detail-row">
+                <span class="detail-label">Seat Numbers</span>
+                <span class="detail-value">
+                    <span th:each="seat, stat : ${seats}">
+                        <span th:text="${seat.seatNumber}"></span>
+                        <span th:if="${!stat.last}">, </span>
+                    </span>
+                </span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Total Fare</span>
+                <span class="detail-value" style="font-weight:800; color:#1e3a5f;">
+                    ₹<span th:text="${booking.totalFare}"></span>
+                </span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Status</span>
+                <span class="badge badge-confirmed"
+                      th:text="${booking.status}">
+                </span>
+            </div>
+
+        </div>
+
+        <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+            <a th:href="@{/user/search}" class="btn btn-primary">
+                🔍 Book Another Ticket
+            </a>
+
+            <a th:href="@{/user/my-bookings}" class="btn btn-secondary">
+                🎫 My Bookings
+            </a>
+            <a th:href="@{'/user/ticket/' + ${booking.id}}" class="btn btn-success">
+                📄 Download Ticket
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

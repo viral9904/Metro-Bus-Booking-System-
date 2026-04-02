@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Search Routes — BM Booking</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <a class="navbar-brand" th:href="@{/user/dashboard}">
+        <span class="brand-icon">🚌</span>
+        BM Booking
+    </a>
+    <button class="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+    </button>
+    <ul class="navbar-links">
+      <li><a th:href="@{/user/search}" class="active"><span class="nav-icon">🔍</span> Search Routes</a></li>
+      <li><a th:href="@{/user/my-bookings}"><span class="nav-icon">🎫</span> My Bookings</a></li>
+      <!-- 👤 PROFILE DROPDOWN -->
+      <li class="profile-dropdown" th:if="${loggedInUserName != null}">
+
+        <a th:href="@{/profile}" class="profile-btn" id="profileBtn">
+          <div class="avatar">👤</div>
+          <span>Hi, <b th:text="${loggedInUserName}"></b></span>
+        </a>
+
+        <div id="dropdownMenu" class="dropdown-menu">
+          <a th:href="@{/profile}">✏️ Edit Profile</a>
+          <a th:href="@{/logout}">🚪 Logout</a>
+        </div>
+
+      </li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <div class="card">
+      <h2 class="card-title">🔍 Search Routes</h2>
+
+      <form th:action="@{/user/search}" method="post">
+        <div class="form-row">
+          <div class="form-group">
+            <label>📍 Source</label>
+            <select name="sourceId" class="form-control" required>
+              <option value="">Select Source</option>
+              <option th:each="s : ${stops}" th:value="${s.id}" th:text="${s.city + ' - ' + s.stopName}">
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>📍 Destination</label>
+            <select name="destinationId" class="form-control" required>
+              <option value="">Select Destination</option>
+              <option th:each="s : ${stops}" th:value="${s.id}" th:text="${s.city + ' - ' + s.stopName}">
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>📅 Travel Date</label>
+            <input type="date" name="travelDate" class="form-control" required />
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">🔍 Search Schedules</button>
+      </form>
+    </div>
+  </div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+
+</html>

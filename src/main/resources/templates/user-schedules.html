@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>All Schedules — BM Booking</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a class="navbar-brand" th:href="@{/user/dashboard}">
+      <span class="brand-icon">🚌</span>
+      BM Booking
+  </a>
+  <button class="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+  </button>
+  <ul class="navbar-links">
+    <li><a th:href="@{/user/search}"><span class="nav-icon">🔍</span> Search Routes</a></li>
+    <li><a th:href="@{/user/my-bookings}"><span class="nav-icon">🎫</span> My Bookings</a></li>
+    <li><a th:href="@{/user/schedules}" class="active"><span class="nav-icon">📅</span> Schedules</a></li>
+    <!-- 👤 PROFILE DROPDOWN -->
+    <li class="profile-dropdown" th:if="${loggedInUserName != null}">
+
+      <a th:href="@{/profile}" class="profile-btn" id="profileBtn">
+        <div class="avatar">👤</div>
+        <span>Hi, <b th:text="${loggedInUserName}"></b></span>
+      </a>
+
+      <div id="dropdownMenu" class="dropdown-menu">
+        <a th:href="@{/profile}">✏️ Edit Profile</a>
+        <a th:href="@{/logout}">🚪 Logout</a>
+      </div>
+
+    </li>
+  </ul>
+</nav>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="section-header">
+    <h2>🚌 All Schedules</h2>
+  </div>
+
+  <!-- FILTER -->
+  <div class="card">
+    <form method="get" th:action="@{/user/schedules}" class="form-row">
+
+      <!-- SOURCE -->
+      <div class="form-group">
+        <label>📍 Source</label>
+        <select name="source" class="form-control">
+          <option value="">Select Source</option>
+          <option th:each="stop : ${stops}"
+                  th:value="${stop.stopName}"
+                  th:text="${stop.stopName}"
+                  th:selected="${stop.stopName == source}">
+          </option>
+        </select>
+      </div>
+
+      <!-- DESTINATION -->
+      <div class="form-group">
+        <label>📍 Destination</label>
+        <select name="destination" class="form-control">
+          <option value="">Select Destination</option>
+          <option th:each="stop : ${stops}"
+                  th:value="${stop.stopName}"
+                  th:text="${stop.stopName}"
+                  th:selected="${stop.stopName == destination}">
+          </option>
+        </select>
+      </div>
+
+      <!-- DATE -->
+      <div class="form-group">
+        <label>📅 Travel Date</label>
+        <input type="date" name="date" th:value="${date}" class="form-control">
+      </div>
+
+      <!-- TYPE -->
+      <div class="form-group">
+        <label>🚍 Vehicle Type</label>
+        <select name="type" class="form-control">
+          <option value="">All</option>
+          <option value="BUS" th:selected="${type == 'BUS'}">Bus</option>
+          <option value="METRO" th:selected="${type == 'METRO'}">Metro</option>
+        </select>
+      </div>
+
+      <!-- BUTTON -->
+      <div class="form-group" style="display:flex; align-items:end;">
+        <button type="submit" class="btn btn-primary">🔍 Search</button>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- LIST -->
+  <div class="card">
+    <h3 class="card-title">Available Schedules</h3>
+
+    <div th:if="${#lists.isEmpty(allSchedules)}"
+         class="text-center text-muted" style="padding:32px;">
+      🚫 No schedules found
+    </div>
+
+    <div class="schedule-list">
+
+      <div class="schedule-item" th:each="s : ${allSchedules}">
+
+        <!-- LEFT -->
+        <div class="schedule-info">
+          <div class="route">
+            <b th:text="${s.route.sourceStop.stopName}"></b>
+            →
+            <b th:text="${s.route.destinationStop.stopName}"></b>
+          </div>
+
+          <div class="details">
+            ⏰ <span th:text="${#temporals.format(s.departureTime, 'hh:mm a')}"></span>
+            &nbsp;|&nbsp;
+
+            🚍
+            <span th:text="${s.vehicle.vehicleType}"
+                  class="seat-badge"
+                  th:classappend="${s.vehicle.vehicleType == 'BUS'} ? 'seat-badge-nonac' : 'seat-badge-ac'">
+            </span>
+
+            &nbsp;|&nbsp;
+
+            📅 <span th:text="${#temporals.format(s.travelDate, 'dd MMM yyyy')}"></span>
+          </div>
+        </div>
+
+        <!-- RIGHT (FIXED) -->
+        <div class="schedule-action">
+
+          <!-- Fare -->
+          <div class="fare text-muted mb-2">
+            ₹50
+          </div>
+
+          <!-- Ticket Input -->
+          <input type="number"
+                 min="1"
+                 max="6"
+                 value="1"
+                 class="ticket-input"
+                 th:id="'ticket-' + ${s.id}">
+
+          <!-- Book Button -->
+          <button type="button"
+                  class="btn btn-success btn-sm"
+                  th:onclick="'goToSeats(' + ${s.id} + ')'">
+            Book Now
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+<!-- SCRIPT -->
+<script>
+  function goToSeats(scheduleId) {
+    const count = document.getElementById("ticket-" + scheduleId).value;
+
+    window.location.href =
+            "/user/bus/seats/" + scheduleId + "?ticketCount=" + count;
+  }
+</script>
+
+</body>
+</html>

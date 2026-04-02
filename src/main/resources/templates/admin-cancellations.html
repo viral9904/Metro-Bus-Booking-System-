@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cancellations — BM Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+
+<!-- Navigation -->
+<nav class="navbar">
+    <a class="navbar-brand" th:href="@{/admin/dashboard}">
+        <span class="brand-icon">🛠</span>
+        BM Admin
+    </a>
+    <button class="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+    </button>
+    <ul class="navbar-links">
+        <li><a th:href="@{/admin/stops}"><span class="nav-icon">📍</span> Stops</a></li>
+        <li><a th:href="@{/admin/routes}"><span class="nav-icon">🗺️</span> Routes</a></li>
+        <li><a th:href="@{/admin/vehicles}"><span class="nav-icon">🚌</span> Vehicles</a></li>
+        <li><a th:href="@{/admin/schedules}"><span class="nav-icon">📅</span> Schedules</a></li>
+        <li><a th:href="@{/admin/bookings}"><span class="nav-icon">🎫</span> Bookings</a></li>
+        <li><a th:href="@{/admin/cancellations}" class="active"><span class="nav-icon">❌</span> Cancellations</a></li>
+        <!-- 👤 PROFILE DROPDOWN -->
+        <li class="profile-dropdown" th:if="${loggedInUserName != null}">
+            <a th:href="@{/profile}" class="profile-btn" id="profileBtn">
+                <div class="avatar">👤</div>
+                <span>Hi, <b th:text="${loggedInUserName}"></b></span>
+            </a>
+            <div id="dropdownMenu" class="dropdown-menu">
+                <a th:href="@{/profile}">✏️ Edit Profile</a>
+                <a th:href="@{/logout}">🚪 Logout</a>
+            </div>
+        </li>
+    </ul>
+</nav>
+
+<div class="container">
+    <div class="card">
+        <h2 class="card-title">❌ Ticket Cancellations</h2>
+
+        <div th:if="${#lists.isEmpty(cancellations)}" class="alert alert-info">
+            📋 No cancellations found.
+        </div>
+
+        <div th:if="${!#lists.isEmpty(cancellations)}" class="table-wrapper">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Booking ID</th>
+                    <th>User</th>
+                    <th>Route</th>
+                    <th>Refund (₹)</th>
+                    <th>Cancelled On</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="c : ${cancellations}">
+                    <td th:text="${c.id}"></td>
+                    <td th:text="${c.booking.id}"></td>
+                    <td th:text="${c.booking.user.fullName}"></td>
+                    <td th:text="${c.booking.schedule.route.sourceStop.stopName + ' → ' +
+                                  c.booking.schedule.route.destinationStop.stopName}">
+                    </td>
+                    <td><strong>₹<span th:text="${c.refundAmount}"></span></strong></td>
+                    <td th:text="${c.cancelledAt}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

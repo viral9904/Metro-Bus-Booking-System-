@@ -1,0 +1,410 @@
+/* ============================================================
+   SEAT SELECTION – Premium Bus Layout  (v2.0)
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #f1f5f9;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Main Wrapper ─── */
+.seat-container-wrapper {
+    max-width: 560px;
+    margin: 40px auto;
+    padding: 0;
+    animation: seatFadeIn .5s ease both;
+}
+
+@keyframes seatFadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Page Header ─── */
+.seat-container-wrapper > h2 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 4px;
+    text-align: center;
+}
+
+.seat-container-wrapper > p {
+    text-align: center;
+    color: #64748b;
+    font-size: .95rem;
+    margin-bottom: 28px;
+    font-weight: 500;
+}
+
+.seat-container-wrapper > p strong {
+    color: #4f46e5;
+    font-size: 1.1rem;
+}
+
+/* ─── Bus Body ─── */
+.bus-body {
+    background: #ffffff;
+    border: 2px solid #cbd5e1;
+    border-radius: 24px 24px 16px 16px;
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(0,0,0,.08);
+    position: relative;
+}
+
+/* ─── Windshield ─── */
+.bus-windshield {
+    background: linear-gradient(180deg, #dbeafe 0%, #bfdbfe 100%);
+    border-bottom: 3px solid #93c5fd;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+.bus-windshield::before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 3px;
+    background: rgba(255,255,255,.6);
+    border-radius: 4px;
+}
+
+.windshield-label {
+    font-size: .75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #1e40af;
+    opacity: .7;
+}
+
+/* ─── Driver Section ─── */
+.driver-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    color: #1e3a5f;
+    font-size: .85rem;
+}
+
+.driver-icon {
+    font-size: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    background: rgba(30,58,95,.1);
+    border-radius: 50%;
+}
+
+/* ─── Seat Area ─── */
+.seat-area {
+    padding: 28px 24px;
+}
+
+/* ─── Seat Grid (2 + aisle + 2) ─── */
+#seatContainer {
+    display: grid;
+    grid-template-columns: 60px 60px 48px 60px 60px;
+    gap: 12px;
+    justify-content: center;
+}
+
+/* ─── Seat Style ─── */
+.seat {
+    width: 60px;
+    height: 60px;
+    text-align: center;
+    line-height: 56px;
+    border-radius: 10px 10px 14px 14px;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    color: #fff;
+    transition: all .25s cubic-bezier(.4,0,.2,1);
+    position: relative;
+    border: none;
+    box-shadow: 0 3px 8px rgba(0,0,0,.1);
+    font-family: 'Inter', sans-serif;
+}
+
+/* Seat back detail */
+.seat::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 3px;
+    right: 3px;
+    height: 8px;
+    background: rgba(0,0,0,.12);
+    border-radius: 8px 8px 0 0;
+}
+
+/* Armrests */
+.seat::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 2px;
+    right: 2px;
+    height: 4px;
+    background: rgba(0,0,0,.08);
+    border-radius: 0 0 10px 10px;
+}
+
+/* Tooltip */
+.seat[data-seat]:hover::before {
+    content: attr(data-seat);
+    position: absolute;
+    top: -34px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #0f172a;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    height: auto;
+    line-height: 1.4;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0,0,0,.2);
+}
+
+.seat:hover {
+    transform: scale(1.12);
+    z-index: 5;
+}
+
+/* ─── Seat Status Colors ─── */
+.AVAILABLE {
+    background: linear-gradient(145deg, #34d399, #10b981);
+    box-shadow: 0 3px 10px rgba(16,185,129,.3);
+}
+.AVAILABLE:hover {
+    box-shadow: 0 4px 20px rgba(16,185,129,.5);
+}
+
+.SELECTED {
+    background: linear-gradient(145deg, #60a5fa, #3b82f6);
+    box-shadow: 0 0 0 3px rgba(59,130,246,.3), 0 4px 16px rgba(59,130,246,.4);
+    animation: seatPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes seatPulse {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(59,130,246,.3), 0 4px 16px rgba(59,130,246,.4); }
+    50%      { box-shadow: 0 0 0 6px rgba(59,130,246,.15), 0 4px 20px rgba(59,130,246,.5); }
+}
+
+.BOOKED {
+    background: linear-gradient(145deg, #94a3b8, #64748b);
+    cursor: not-allowed;
+    opacity: .7;
+}
+.BOOKED:hover {
+    transform: none;
+    box-shadow: 0 3px 8px rgba(0,0,0,.1);
+}
+
+.LOCKED {
+    background: linear-gradient(145deg, #fb923c, #f97316);
+    cursor: not-allowed;
+    box-shadow: 0 3px 10px rgba(249,115,22,.3);
+}
+.LOCKED:hover {
+    transform: none;
+}
+
+.aisle {
+    width: 48px;
+    background: none;
+    border: none;
+    box-shadow: none;
+    pointer-events: none;
+}
+
+.aisle::before,
+.aisle::after {
+    display: none;
+}
+
+/* ─── Legend ─── */
+.seat-legend {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px 24px;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #475569;
+    font-weight: 500;
+}
+
+.legend-box {
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+
+.legend-available  { background: linear-gradient(145deg, #34d399, #10b981); }
+.legend-booked     { background: linear-gradient(145deg, #94a3b8, #64748b); }
+.legend-selected   { background: linear-gradient(145deg, #60a5fa, #3b82f6); }
+.legend-locked     { background: linear-gradient(145deg, #fb923c, #f97316); }
+
+/* ─── Floating Summary Panel ─── */
+.seat-summary {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin-top: 24px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.06);
+    transition: all .3s ease;
+}
+
+.seat-summary-title {
+    font-size: .85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #64748b;
+    margin-bottom: 12px;
+}
+
+.seat-summary-seats {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    min-height: 36px;
+    align-items: center;
+}
+
+.seat-summary-seats:empty::before {
+    content: 'No seats selected yet';
+    color: #94a3b8;
+    font-size: .85rem;
+    font-style: italic;
+}
+
+.seat-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 14px;
+    background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+    color: #4f46e5;
+    border-radius: 50px;
+    font-size: .82rem;
+    font-weight: 700;
+    animation: chipIn .2s ease both;
+    border: 1px solid rgba(79,70,229,.15);
+}
+
+@keyframes chipIn {
+    from { opacity: 0; transform: scale(.8); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+.seat-summary-count {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: .9rem;
+    font-weight: 600;
+    color: #475569;
+}
+
+.seat-summary-count span {
+    color: #4f46e5;
+    font-weight: 800;
+    font-size: 1.1rem;
+}
+
+/* ─── Confirm Button ─── */
+.btn-confirm-seat {
+    margin-top: 24px;
+    padding: 14px 40px;
+    background: linear-gradient(135deg, #1e3a5f, #4f46e5);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all .25s cubic-bezier(.4,0,.2,1);
+    font-family: 'Inter', sans-serif;
+    box-shadow: 0 4px 16px rgba(30,58,95,.3);
+    letter-spacing: .3px;
+}
+
+.btn-confirm-seat:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(30,58,95,.4);
+}
+
+.btn-confirm-seat:active {
+    transform: translateY(-1px);
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 600px) {
+    .seat-container-wrapper {
+        margin: 20px 12px;
+    }
+
+    #seatContainer {
+        grid-template-columns: 50px 50px 36px 50px 50px;
+        gap: 8px;
+    }
+
+    .seat {
+        width: 50px;
+        height: 50px;
+        line-height: 46px;
+        font-size: 11px;
+        border-radius: 8px 8px 10px 10px;
+        background: #ccc;
+    }
+
+    .aisle {
+        width: 36px;
+    }
+
+    .seat-area {
+        padding: 20px 12px;
+    }
+
+    .seat-legend {
+        gap: 12px;
+    }
+
+    .seat-summary {
+        padding: 16px;
+    }
+}
